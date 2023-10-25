@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup as bs
+import datetime
 
 # Should probably make this in some better way
 GOALIES = ('Ville Husso', 'James Reimer')
@@ -39,7 +40,8 @@ def getPlayerPoints(gameDate):
             elif save == 1.0:
                 p = 5
 
-        points[name] = p
+        points[name.lower()] = p
+        points[name.split(' ')[-1].lower()] = p
     
     # Now for wings score
     page = requests.get('https://www.statmuse.com/nhl/ask?q=red+wings+score+' + gameDate)
@@ -58,10 +60,30 @@ def getPlayerPoints(gameDate):
     if p < 0:
         p = 0
     
-    points["Wings"] = p
+    points["wings"] = p
+    points["red wings"] = p
 
     return points
 
+def getOpponent(date):
+    page = requests.get('https://www.statmuse.com/nhl/ask?q=red+wings+score+' + date)
+    soup = bs(page.content, 'html.parser')
+
+    teamOne = soup.body.contents[2].contents[0].contents[2].contents[0].contents[1].contents[0].contents[0]
+    teamTwo = soup.body.contents[2].contents[0].contents[2].contents[0].contents[2].contents[0].contents[0]
+    return teamOne if teamOne != 'DET' else teamTwo
+
+def validDate(date):
+    d = date.split('/')
+    if len(d) == 2:
+        if int(d[0]) >= 10:
+            d.append(str(datetime.date.today().year)[-2:])
+        else:
+            d.append(str(datetime.date.today().year + 1)[-2:])
+    timeObject = datetime.datetime.strptime('/'.join(d), "%m/%d/%y")
+    return timeObject
+
 if __name__ == '__main__':
-    for i,j in getPlayerPoints("10/22/23").items():
-        print(i, j)
+    # for i,j in getPlayerPoints("10/22/23").items():
+    #     print(i, j)
+    print(validDate("1/4"))

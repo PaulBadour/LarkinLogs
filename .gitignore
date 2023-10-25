@@ -2,3 +2,4 @@ token.env
 credentials.json
 token.pickle
 Schedule.pdf
+__pycache__
