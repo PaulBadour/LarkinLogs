@@ -25,7 +25,7 @@ async def on_ready():
 @bot.event
 
 async def on_message(message):
-    print(message)
+
     if message.content == "yo":
         await message.channel.send("Hey retard")
 
