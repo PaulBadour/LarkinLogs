@@ -40,7 +40,6 @@ def getPlayerPoints(gameDate):
             elif save == 1.0:
                 p = 5
 
-        points[name.lower()] = p
         points[name.split(' ')[-1].lower()] = p
     
     # Now for wings score
@@ -61,7 +60,6 @@ def getPlayerPoints(gameDate):
         p = 0
     
     points["wings"] = p
-    points["red wings"] = p
 
     return points
 

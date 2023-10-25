@@ -46,4 +46,7 @@ async def on_message(message):
             await message.channel.send(f"{message.author.mention} the Wings earned {points} point{'' if points == 1 else 's'}")
         else:
             await message.channel.send(f"{message.author.mention} that bitch {name} got {points} point{'' if points == 1 else 's'}")
+
+    elif command[0] == ".admin":
+        pass
 bot.run(dtok)
