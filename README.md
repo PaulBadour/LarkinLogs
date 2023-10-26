@@ -4,3 +4,4 @@ A private recreation of Bally Sports Detroits Light The Lamp game with modified 
 
 OT Winner and Shootout goals do not work at the moment
 Stats determining position should probably get it online, but not found a nice way yet
+Schedule needs to be made also

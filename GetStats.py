@@ -64,11 +64,12 @@ def getPlayerPoints(gameDate):
     return points
 
 def getOpponent(date):
-    page = requests.get('https://www.statmuse.com/nhl/ask?q=red+wings+score+' + date)
+    page = requests.get('https://www.statmuse.com/nhl/ask?q=who+do+red+wings+play+' + date)
     soup = bs(page.content, 'html.parser')
 
-    teamOne = soup.body.contents[2].contents[0].contents[2].contents[0].contents[1].contents[0].contents[0]
-    teamTwo = soup.body.contents[2].contents[0].contents[2].contents[0].contents[2].contents[0].contents[0]
+    teamOne = soup.body.contents[2].contents[0].contents[0].contents[1].contents[0].contents[1].contents[0].contents[0]
+    teamTwo = soup.body.contents[2].contents[0].contents[0].contents[1].contents[1].contents[1].contents[0].contents[0]
+
     return teamOne if teamOne != 'DET' else teamTwo
 
 def validDate(date):
@@ -84,4 +85,4 @@ def validDate(date):
 if __name__ == '__main__':
     # for i,j in getPlayerPoints("10/22/23").items():
     #     print(i, j)
-    print(validDate("1/4"))
+    getOpponent("10/26/23")

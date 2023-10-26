@@ -2,6 +2,7 @@ import discord # Discord.py
 from dotenv import load_dotenv # python-dotenv
 import os
 from GetStats import getPlayerPoints
+import SheetInteract
 
 dir = os.path.abspath(os.path.dirname(__file__))
 load_dotenv(os.path.join(dir, 'token.env'))
@@ -27,6 +28,7 @@ async def on_ready():
 async def on_message(message):
     date = "10/24/23"
     command = message.content.lower().split(' ')
+    print(command)
     if command[0] == ".points":
         if len(command) == 1:
             await message.channel.send(f"{message.author.mention} you didnt give me a player retard")
@@ -47,6 +49,11 @@ async def on_message(message):
         else:
             await message.channel.send(f"{message.author.mention} that bitch {name} got {points} point{'' if points == 1 else 's'}")
 
-    elif command[0] == ".admin":
-        pass
+    elif command[0] == ".admin" and command[1] == 'addstats':
+        print('adding stats')
+        s = SheetInteract.Sheet()
+        s.addPointStats(command[2])
+        await message.channel.send(f"{message.author.mention} sheet updated")
+
+
 bot.run(dtok)
