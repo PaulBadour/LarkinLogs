@@ -10,6 +10,7 @@ dtok = os.getenv("DISCORD_TOKEN")
 
 intents = discord.Intents.default()
 intents.message_content = True
+intents.members = True
 
 bot = discord.Client(intents=intents)
 
@@ -17,18 +18,14 @@ bot = discord.Client(intents=intents)
 
 
 @bot.event
-
 async def on_ready():
     print("Ready")
 
 
-
 @bot.event
-
 async def on_message(message):
     date = "10/24/23"
     command = message.content.lower().split(' ')
-    print(command)
     if command[0] == ".points":
         if len(command) == 1:
             await message.channel.send(f"{message.author.mention} you didnt give me a player retard")
@@ -53,7 +50,29 @@ async def on_message(message):
         print('adding stats')
         s = SheetInteract.Sheet()
         s.addPointStats(command[2])
+        del s
         await message.channel.send(f"{message.author.mention} sheet updated")
 
+    elif command[0] == ".admin" and command[1] == 'setupgame':
+        print('setting up game')
+        s = SheetInteract.Sheet()
+        s.setupGame(command[2])
+        del s
+        await message.channel.send(f"{message.author.mention} game set up")
+
+    elif command[0] == ".admin" and command[1] == 'startdraft':
+        names = (('Eddy', '333328782092009472'), ('Paul', '297418880811401226'), ('Flynn', '344874985971515403'), ('Johnson', '217693320447655936'))
+        s = SheetInteract.Sheet()
+        firstPick = s.startDraft()
+        await message.channel.send(content=f"@everyone The Draft for {command[2]} has started!", allowed_mentions=discord.AllowedMentions(everyone = True))
+        await message.channel.send(f"<@{nameToID(firstPick)}> you have first overall pick!")
+
+def nameToID(name):
+    d = {'Eddy': '333328782092009472', 'Paul': '297418880811401226', 'Flynn': '344874985971515403', 'Johnson': '217693320447655936'}
+    return d[name]
+
+def IDToName(id):
+    d = {v : k for k, v in {'Eddy': '333328782092009472', 'Paul': '297418880811401226', 'Flynn': '344874985971515403', 'Johnson': '217693320447655936'}.items()}
+    return d[id]
 
 bot.run(dtok)

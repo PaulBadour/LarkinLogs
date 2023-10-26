@@ -5,14 +5,17 @@ import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 class Sheet:
-    GAME_PLAYED_SPOT = 'B1'
+    drafted = set()
     def __init__(self):
         cred = gspread.service_account("cred.json")
         self.sheet = cred.open_by_key('1PhKd7v2ydqVTw3osRN7G9Vtd264ENbLSJ1-46L7yUPA')
         
+    def __del__(self):
+        self.sheet.client.session.close()
+
 
     def setupGame(self, date):
-        gp = int(self.sheet.get_worksheet(2).acell(Sheet.GAME_PLAYED_SPOT).value)
+        gp = int(self.sheet.get_worksheet(2).acell('B1').value)
         startCell = (6 * gp) + 4
         
         
@@ -56,8 +59,8 @@ class Sheet:
 
         for i in range(4):
             game.update_acell(f'A{startCell + i + 1}', order[i][0])
-            game.update_acell(f'D{startCell + i + 1}', f'=INDEX(StatDump!A{gp + 1}:Z{gp + 1}, 0, MATCH(LOWER(B{(6*gp)+5 + i}), StatDump!B1:Z1, 0) +1)')
-            game.update_acell(f'E{startCell + i + 1}', f'=INDEX(StatDump!A{gp + 1}:Z{gp + 1}, 0, MATCH(LOWER(C{(6*gp)+5 + i}), StatDump!B1:Z1, 0) +1)')
+            game.update_acell(f'D{startCell + i + 1}', f'=INDEX(StatDump!A{gp + 2}:Z{gp + 2}, 0, MATCH(LOWER(B{(6*gp)+5 + i}), StatDump!B1:Z1, 0) +1)')
+            game.update_acell(f'E{startCell + i + 1}', f'=INDEX(StatDump!A{gp + 2}:Z{gp + 2}, 0, MATCH(LOWER(C{(6*gp)+5 + i}), StatDump!B1:Z1, 0) +1)')
             game.update_acell(f'G{startCell + i + 1}', f'=SUM(D{(6*gp) + 5 + i}:E{(6*gp) + 5 + i})')
             
 
@@ -68,7 +71,8 @@ class Sheet:
         self.sheet.get_worksheet(2).update('B3', order[1][0])
         self.sheet.get_worksheet(2).update('B4', order[2][0])
         self.sheet.get_worksheet(2).update('B5', order[3][0])
-
+        self.sheet.get_worksheet(2).update('B6', 0)
+        self.sheet.get_worksheet(2).update('B7', startCell)
 
 
 
@@ -102,7 +106,9 @@ class Sheet:
             self.sheet.get_worksheet(1).update(f"{chr(ord('A') + len(listedPlayers) + 1)}1", [apNames])
         self.sheet.get_worksheet(1).update(f"A{gp + 2}", [data])
 
-
+    def startDraft(self):
+        self.sheet.get_worksheet(2).update('B6', 1)
+        return self.sheet.get_worksheet(2).acell('B2').value
 
     def getTotalScores(self):
         game = self.sheet.get_worksheet(0)
@@ -112,6 +118,8 @@ class Sheet:
         scores['Flynn'] = int(game.acell('K7').value)
         scores['Johnson'] = int(game.acell('K8').value)
         return scores
+
+        
 
 if __name__ == '__main__':
     s = Sheet()
