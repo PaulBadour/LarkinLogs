@@ -38,7 +38,7 @@ async def on_message(message):
             name = ' '.join(command[1:3])
 
         else:
-            await message.channel.send(f"{message.author.mention} they did not play in this game faggot")
+            await message.channel.send(f"{message.author.mention} they did not play in this game retard")
             return
         points = stats[name]
         if name in ('wings', 'red wings'):
@@ -61,11 +61,30 @@ async def on_message(message):
         await message.channel.send(f"{message.author.mention} game set up")
 
     elif command[0] == ".admin" and command[1] == 'startdraft':
-        names = (('Eddy', '333328782092009472'), ('Paul', '297418880811401226'), ('Flynn', '344874985971515403'), ('Johnson', '217693320447655936'))
         s = SheetInteract.Sheet()
         firstPick = s.startDraft()
         await message.channel.send(content=f"@everyone The Draft for {command[2]} has started!", allowed_mentions=discord.AllowedMentions(everyone = True))
         await message.channel.send(f"<@{nameToID(firstPick)}> you have first overall pick!")
+        del s
+
+    elif command[0] == ".pick":
+        s = SheetInteract.Sheet()
+        pick = s.getNextDraftee()
+        if pick == None:
+            await message.channel.send(f"{message.author.mention} no active draft retard")
+            return
+        if int(nameToID(pick)) != message.author.id:
+            await message.channel.send(f"{message.author.mention} its not your pick retard")
+            return
+        res = s.pickPlayer(command[1])
+        if res:
+            await message.channel.send(f"Player drafted. <@{nameToID(s.getNextDraftee())}> has next pick")
+        elif res == False:
+            await message.channel.send(f"<@{nameToID(s.getNextDraftee())}> player has already been drafted")
+
+        else:
+            await message.channel.send(f"Player drafted. Draft is over!")
+        del s
 
 def nameToID(name):
     d = {'Eddy': '333328782092009472', 'Paul': '297418880811401226', 'Flynn': '344874985971515403', 'Johnson': '217693320447655936'}

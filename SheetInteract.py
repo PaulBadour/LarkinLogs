@@ -46,7 +46,7 @@ class Sheet:
 
                 elif s[order[i][0]] == s[order[i + 1][0]]:
                     print('Coin Flip')
-                    if r.randrange(1) == 1:
+                    if r.randrange(2) == 1:
                         temp = order[i]
                         order[i] = order[i + 1]
                         order[i + 1] = temp
@@ -108,6 +108,7 @@ class Sheet:
 
     def startDraft(self):
         self.sheet.get_worksheet(2).update('B6', 1)
+        self.sheet.get_worksheet(2).update('B8', '')
         return self.sheet.get_worksheet(2).acell('B2').value
 
     def getTotalScores(self):
@@ -119,6 +120,36 @@ class Sheet:
         scores['Johnson'] = int(game.acell('K8').value)
         return scores
 
+    def getNextDraftee(self):
+        pickNum = int(self.sheet.get_worksheet(2).acell('B6').value)
+        if pickNum == 0:
+            return None
+        if pickNum > 4:
+            pickNum = (pickNum * -1) + 9
+        return self.sheet.get_worksheet(2).acell(f'B{1 + pickNum}').value
+    
+
+    def pickPlayer(self, player):
+        drafted = self.sheet.get_worksheet(2).acell('B8').value
+        drafted = drafted.split(' ') if drafted != None else []
+        if player in drafted:
+            return False
+        
+        drafted.append(player)
+        pick = int(self.sheet.get_worksheet(2).acell('B6').value)
+        refCell = int(self.sheet.get_worksheet(2).acell('B7').value)
+        if pick < 5:
+            self.sheet.get_worksheet(0).update(f'B{refCell + pick}', player)
+        else:
+            self.sheet.get_worksheet(0).update(f'C{refCell + (pick * -1) + 9}', player)
+        
+        if pick < 8:
+            self.sheet.get_worksheet(2).update('B8', ' '.join(drafted))
+            self.sheet.get_worksheet(2).update('B6', pick + 1)
+        else:
+            self.sheet.get_worksheet(2).update('B6', 0)
+            return None
+        return True
         
 
 if __name__ == '__main__':
