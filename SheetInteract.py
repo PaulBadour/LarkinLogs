@@ -74,10 +74,11 @@ class Sheet:
         self.sheet.get_worksheet(2).update('B6', 0)
         self.sheet.get_worksheet(2).update('B7', startCell)
 
+        return self.startDraft()
 
 
     def addPointStats(self, date):
-        gp = int(self.sheet.get_worksheet(2).acell(Sheet.GAME_PLAYED_SPOT).value)
+        gp = int(self.sheet.get_worksheet(2).acell('B1').value)
         #pa = int(self.sheet.get_worksheet(2).acell('B7').value)
         stats = getPlayerPoints(date)
         data = [date]
@@ -104,7 +105,7 @@ class Sheet:
 
         if apNames != None:
             self.sheet.get_worksheet(1).update(f"{chr(ord('A') + len(listedPlayers) + 1)}1", [apNames])
-        self.sheet.get_worksheet(1).update(f"A{gp + 2}", [data])
+        self.sheet.get_worksheet(1).update(f"A{gp + 1}", [data])
 
     def startDraft(self):
         self.sheet.get_worksheet(2).update('B6', 1)
@@ -153,5 +154,4 @@ class Sheet:
         
 
 if __name__ == '__main__':
-    s = Sheet()
-    s.setupGame("10/26/23")
+    pass

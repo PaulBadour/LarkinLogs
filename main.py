@@ -56,16 +56,17 @@ async def on_message(message):
     elif command[0] == ".admin" and command[1] == 'setupgame':
         print('setting up game')
         s = SheetInteract.Sheet()
-        s.setupGame(command[2])
-        del s
-        await message.channel.send(f"{message.author.mention} game set up")
-
-    elif command[0] == ".admin" and command[1] == 'startdraft':
-        s = SheetInteract.Sheet()
-        firstPick = s.startDraft()
+        firstPick = s.setupGame(command[2])
         await message.channel.send(content=f"@everyone The Draft for {command[2]} has started!", allowed_mentions=discord.AllowedMentions(everyone = True))
         await message.channel.send(f"<@{nameToID(firstPick)}> you have first overall pick!")
         del s
+
+    # elif command[0] == ".admin" and command[1] == 'startdraft':
+    #     s = SheetInteract.Sheet()
+    #     firstPick = s.startDraft()
+    #     await message.channel.send(content=f"@everyone The Draft for {command[2]} has started!", allowed_mentions=discord.AllowedMentions(everyone = True))
+    #     await message.channel.send(f"<@{nameToID(firstPick)}> you have first overall pick!")
+    #     del s
 
     elif command[0] == ".pick":
         s = SheetInteract.Sheet()
