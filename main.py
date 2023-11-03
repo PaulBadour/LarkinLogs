@@ -49,9 +49,13 @@ async def on_message(message):
     elif command[0] == ".admin" and command[1] == 'addstats':
         print('adding stats')
         s = SheetInteract.Sheet()
-        s.addPointStats(command[2])
+        stats,drafted = s.addPointStats(command[2])
         del s
-        await message.channel.send(f"{message.author.mention} sheet updated")
+        string = f"@everyone Points for {command[2]} are in!\nPoint Scorers:\n"
+        for i in stats.keys():
+            if stats[i] != 0:
+                string += f"{i.capitalize()}: {stats[i]} point{'s' if stats[i] != 1 else ''} {'Unclaimed' if len([j[0] for j in drafted if i == j[1] or i == j[2]])==0 else 'for ' + [j[0] for j in drafted if i == j[1] or i == j[2]][0]}"
+        await message.channel.send(string)
 
     elif command[0] == ".admin" and command[1] == 'setupgame':
         print('setting up game')
@@ -60,13 +64,6 @@ async def on_message(message):
         await message.channel.send(content=f"@everyone The Draft for {command[2]} has started!", allowed_mentions=discord.AllowedMentions(everyone = True))
         await message.channel.send(f"<@{nameToID(firstPick)}> you have first overall pick!")
         del s
-
-    # elif command[0] == ".admin" and command[1] == 'startdraft':
-    #     s = SheetInteract.Sheet()
-    #     firstPick = s.startDraft()
-    #     await message.channel.send(content=f"@everyone The Draft for {command[2]} has started!", allowed_mentions=discord.AllowedMentions(everyone = True))
-    #     await message.channel.send(f"<@{nameToID(firstPick)}> you have first overall pick!")
-    #     del s
 
     elif command[0] == ".pick":
         s = SheetInteract.Sheet()

@@ -70,7 +70,7 @@ def getOpponent(date):
     teamOne = soup.body.contents[2].contents[0].contents[0].contents[1].contents[0].contents[1].contents[0].contents[0]
     teamTwo = soup.body.contents[2].contents[0].contents[0].contents[1].contents[1].contents[1].contents[0].contents[0]
 
-    return teamOne if teamOne != 'DET' else teamTwo
+    return teamOne if teamOne != 'Red Wings' else teamTwo
 
 def validDate(date):
     d = date.split('/')

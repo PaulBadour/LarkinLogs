@@ -2,6 +2,7 @@ from GetStats import getOpponent, getPlayerPoints
 import gspread
 import random as r
 import warnings
+from copy import deepcopy
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 class Sheet:
@@ -65,7 +66,7 @@ class Sheet:
             
 
 
-        # This coudl be combined if API space becomes an issue
+        # This could be combined if API space becomes an issue (it should be updated anyway)
         self.sheet.get_worksheet(2).update('B1', gp + 1)
         self.sheet.get_worksheet(2).update('B2', order[0][0])
         self.sheet.get_worksheet(2).update('B3', order[1][0])
@@ -81,6 +82,7 @@ class Sheet:
         gp = int(self.sheet.get_worksheet(2).acell('B1').value)
         #pa = int(self.sheet.get_worksheet(2).acell('B7').value)
         stats = getPlayerPoints(date)
+        cstats = deepcopy(stats)
         data = [date]
 
         # pointedPlayers = [i for i in stats.keys() if stats[i] > 0][1:]
@@ -106,6 +108,11 @@ class Sheet:
         if apNames != None:
             self.sheet.get_worksheet(1).update(f"{chr(ord('A') + len(listedPlayers) + 1)}1", [apNames])
         self.sheet.get_worksheet(1).update(f"A{gp + 1}", [data])
+
+        ws = self.sheet.get_worksheet(2).acell('B7').value
+        drafted = self.sheet.get_worksheet(0).get(f'A{int(ws)+1}:C{int(ws)+5}')
+
+        return cstats,drafted
 
     def startDraft(self):
         self.sheet.get_worksheet(2).update('B6', 1)
@@ -144,13 +151,18 @@ class Sheet:
         else:
             self.sheet.get_worksheet(0).update(f'C{refCell + (pick * -1) + 9}', player)
         
+        self.sheet.get_worksheet(2).update('B8', ' '.join(drafted))
         if pick < 8:
-            self.sheet.get_worksheet(2).update('B8', ' '.join(drafted))
             self.sheet.get_worksheet(2).update('B6', pick + 1)
         else:
             self.sheet.get_worksheet(2).update('B6', 0)
             return None
         return True
+    
+    def test(self):
+        ws = self.sheet.get_worksheet(2).acell('B7').value
+        data = self.sheet.get_worksheet(0).get(f'A{int(ws)+1}:C{int(ws)+5}')
+        return data
         
 
 if __name__ == '__main__':
