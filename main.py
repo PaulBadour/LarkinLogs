@@ -28,7 +28,7 @@ async def on_message(message):
     command = message.content.lower().split(' ')
     if command[0] == ".points":
         if len(command) == 1:
-            await message.channel.send(f"{message.author.mention} you didnt give me a player retard")
+            await message.channel.send(f"{message.author.mention} you didnt give me a player")
         
         stats = getPlayerPoints(date)
         if command[1] in stats.keys():
@@ -38,13 +38,13 @@ async def on_message(message):
             name = ' '.join(command[1:3])
 
         else:
-            await message.channel.send(f"{message.author.mention} they did not play in this game retard")
+            await message.channel.send(f"{message.author.mention} they did not play in this game")
             return
         points = stats[name]
         if name in ('wings', 'red wings'):
             await message.channel.send(f"{message.author.mention} the Wings earned {points} point{'' if points == 1 else 's'}")
         else:
-            await message.channel.send(f"{message.author.mention} that bitch {name} got {points} point{'' if points == 1 else 's'}")
+            await message.channel.send(f"{message.author.mention} {name} got {points} point{'' if points == 1 else 's'}")
 
     elif command[0] == ".admin" and command[1] == 'addstats':
         print('adding stats')
@@ -56,6 +56,7 @@ async def on_message(message):
             if stats[i] != 0:
                 string += f"{i.capitalize()}: {stats[i]} point{'s' if stats[i] != 1 else ''} {'Unclaimed' if len([j[0] for j in drafted if i == j[1] or i == j[2]])==0 else 'for ' + [j[0] for j in drafted if i == j[1] or i == j[2]][0]}"
         await message.channel.send(string)
+        del s
 
     elif command[0] == ".admin" and command[1] == 'setupgame':
         print('setting up game')
@@ -69,10 +70,10 @@ async def on_message(message):
         s = SheetInteract.Sheet()
         pick = s.getNextDraftee()
         if pick == None:
-            await message.channel.send(f"{message.author.mention} no active draft retard")
+            await message.channel.send(f"{message.author.mention} no active draft")
             return
         if int(nameToID(pick)) != message.author.id:
-            await message.channel.send(f"{message.author.mention} its not your pick retard")
+            await message.channel.send(f"{message.author.mention} its not your pick")
             return
         res = s.pickPlayer(command[1])
         if res:
@@ -83,6 +84,14 @@ async def on_message(message):
         else:
             await message.channel.send(f"Player drafted. Draft is over!")
         del s
+
+    elif command[0] == '.standings':
+        s = SheetInteract.Sheet()
+        l = sorted(s.getStandings(), key=lambda x: x[1], reverse=True)
+        string = f"{message.author.mention} here are the standings:"
+        for i in l:
+            string += f"\n{i[0]} has {i[1]} points"
+        await message.channel.send(string)
 
 def nameToID(name):
     d = {'Eddy': '333328782092009472', 'Paul': '297418880811401226', 'Flynn': '344874985971515403', 'Johnson': '217693320447655936'}

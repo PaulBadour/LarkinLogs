@@ -159,6 +159,9 @@ class Sheet:
             return None
         return True
     
+    def getStandings(self):
+        return list(map(lambda x: (x[0], int(x[1])), self.sheet.get_worksheet(0).get('J5:K8')))
+    
     def test(self):
         ws = self.sheet.get_worksheet(2).acell('B7').value
         data = self.sheet.get_worksheet(0).get(f'A{int(ws)+1}:C{int(ws)+5}')
@@ -166,4 +169,5 @@ class Sheet:
         
 
 if __name__ == '__main__':
-    pass
+    s = Sheet()
+    print(s.getStandings())
