@@ -15,8 +15,6 @@ intents.members = True
 bot = discord.Client(intents=intents)
 
 
-
-
 @bot.event
 async def on_ready():
     print("Ready")
@@ -51,12 +49,11 @@ async def on_message(message):
         s = SheetInteract.Sheet()
         stats,drafted = s.addPointStats(command[2])
         del s
-        string = f"@everyone Points for {command[2]} are in!\nPoint Scorers:\n"
+        string = f"@everyone Points for {command[2]} are in!\nPoint Scorers:"
         for i in stats.keys():
             if stats[i] != 0:
-                string += f"{i.capitalize()}: {stats[i]} point{'s' if stats[i] != 1 else ''} {'Unclaimed' if len([j[0] for j in drafted if i == j[1] or i == j[2]])==0 else 'for ' + [j[0] for j in drafted if i == j[1] or i == j[2]][0]}"
+                string += f"\n{i.capitalize()}: {stats[i]} point{'s' if stats[i] != 1 else ''} {'unclaimed' if len([j[0] for j in drafted if i == j[1] or i == j[2]])==0 else 'for ' + [j[0] for j in drafted if i == j[1] or i == j[2]][0]}"
         await message.channel.send(string)
-        del s
 
     elif command[0] == ".admin" and command[1] == 'setupgame':
         print('setting up game')

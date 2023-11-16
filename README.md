@@ -7,3 +7,4 @@ Stats determining position should probably get it online, but not found a nice w
 Add logging
 Add admin features like overwrite picking
 Get ready for hosting
+Add privatization of discord ids
